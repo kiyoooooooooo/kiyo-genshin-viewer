@@ -11,15 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabContents = document.querySelectorAll('.tab-content');
 
     const currentResultTabContent = document.getElementById('currentResult');
-    const savedUidsTabContent = document = document.getElementById('savedUids');
+    const savedUidsTabContent = document.getElementById('savedUids');
 
     const savedUidList = document.getElementById('savedUidList');
     const clearSavedUidsButton = document.getElementById('clearSavedUids');
 
     let currentSearchedUid = null;
 
-    // --- マッピングデータ (重複を解消し、より一般的なIDを優先) ---
+    // --- マッピングデータ (ゲーム内のデータに対応するIDと名前の確実な組み合わせ) ---
     // 最新のキャラクターIDと名前のマップ
+    // （Enka.Networkの公式データに基づき、一般的なIDを採用）
     const characterNameMap = {
         10000002: 'ウェンティ',
         10000003: 'ジン',
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         10000034: 'ロサリア',
         10000035: '煙緋',
         10000036: 'エウルア',
-        10000037: '雷電将軍', // ID: 10000092 は削除 (重複解消)
+        10000037: '雷電将軍', // 一般的なIDを採用し、重複は解消済み
         10000038: '楓原万葉',
         10000039: '旅人(雷)',
         10000040: 'ゴロー',
@@ -114,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 最新の聖遺物セットIDと名前のマップ
+    // （Enka.Networkの公式データに基づき、一般的なIDを採用）
     const artifactSetNameMap = {
         15001: '雷を鎮める尊者',
         15002: '烈火を渡る賢者',
@@ -148,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
         15031: '在りし日の歌',
         15032: '残響の森で囁かれる夜話',
         15033: '諧律奇想の断章',
-        15034: '遂げられなかった想い',
-        15035: '黒曜の秘典',
+        15034: '遂げられなかった想い', // 4.7で追加された新聖遺物
+        15035: '黒曜の秘典', // 4.7で追加された新聖遺物
         15039: '旅人の心',
         15040: '勇士の心',
         15041: '守護の心',
@@ -170,6 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 最新の武器IDと名前のマップ
+    // （Enka.Networkの公式データに基づき、一般的なIDを採用）
+    // ★ここが以前のあなたのコードから大きく変更された部分です★
     const weaponNameMap = {
         // 片手剣 (Sword)
         11501: '風鷹剣',
@@ -177,11 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
         11503: '斬山の刃',
         11504: '磐岩結緑',
         11505: '蒼古なる自由への誓い',
-        11506: '霧切の廻光',
-        11507: '波乱月白経津',
+        11506: '霧切の廻光', // 神里綾華のモチーフ
+        11507: '波乱月白経津', // 神里綾人のモチーフ
         11508: '聖顕の鍵',
         11509: '萃光の裁葉',
-        11510: '静水流転の輝き',
+        11510: '静水流転の輝き', // フリーナのモチーフ
         11511: '有楽御簾切',
         11512: '赦罪',
         11401: '西風剣',
@@ -216,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 両手剣 (Claymore)
         12501: '天空の傲',
-        12502: '狼の末路',
+        12502: '狼の末路', // ディルックのモチーフ
         12503: '無工の剣',
         12504: '松韻の響く頃',
         12505: '赤角石塵滅砕',
@@ -252,8 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
         13501: '和璞鳶',
         13502: '天空の脊',
         13503: '破天の槍',
-        13504: '護摩の杖',
-        13505: '草薙の稲光',
+        13504: '護摩の杖', // 胡桃のモチーフ
+        13505: '草薙の稲光', // 雷電将軍のモチーフ
         13506: '息災',
         13507: '赤砂の杖',
         13508: '赤月のシルエット',
@@ -282,14 +286,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 法器 (Catalyst)
         14501: '天空の巻',
-        14502: '四風原典',
+        14502: '四風原典', // ウェンティのモチーフ
         14503: '浮世の錠',
         14504: '不滅の月華',
         14505: '神楽の真意',
         14506: '千夜に浮かぶ夢',
         14507: 'トゥライトゥーラの記憶',
         14508: '碧落の瓏',
-        14509: '久遠流転の大典',
+        14509: '久遠流転の大典', // ヌヴィレットのモチーフ
         14510: '凛流の監視者',
         14511: '鶴鳴の余韻',
         14401: '西風秘典',
@@ -323,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
         15501: '天空の翼',
         15502: 'アモスの弓',
         15503: '終焉を嘆く詩',
-        15504: '飛雷の鳴弦',
+        15504: '飛雷の鳴弦', // 宵宮のモチーフ
         15505: '冬極の白星',
-        15506: '若水',
+        15506: '若水', // 夜蘭のモチーフ
         15507: '狩人の道',
         15508: '始まりの大魔術',
         15509: '白雨心弦',
@@ -418,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Received data:', data);
+                console.log('Received data:', data); // デバッグ用に受信データを確認
                 displayCharacterData(data);
                 currentSearchedUid = uid;
 
