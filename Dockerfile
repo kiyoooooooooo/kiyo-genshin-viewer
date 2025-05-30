@@ -1,15 +1,18 @@
 # ベースイメージとしてOpenAdoptiumのJava 17 JDKを使用
 FROM eclipse-temurin:17-jdk-jammy
 
-# (Mavenインストール部分は通常不要なので、このままでOK)
-# RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-
 # 作業ディレクトリを /app に設定
 WORKDIR /app
 
-# Mavenのpom.xmlとソースコードをコンテナにコピー
+# Mavenのpom.xml、srcディレクトリ、Maven Wrapper関連のファイルをコンテナにコピー
 COPY pom.xml .
 COPY src ./src
+COPY mvnw .
+COPY mvnw.cmd . # Windowsユーザーの場合も念のためコピー
+COPY .mvn ./.mvn # Maven Wrapperのダウンロードに必要なディレクトリ
+
+# mvnw スクリプトに実行権限を付与
+RUN chmod +x ./mvnw
 
 # アプリケーションをビルド
 # このRUNコマンドで、コンテナ内の/app/target/にJARファイルが生成される
