@@ -29,7 +29,7 @@ ARG JAR_FILE_NAME=genshin-viewer-0.0.1-SNAPSHOT.jar
 COPY target/${JAR_FILE_NAME} /app/app.jar
 
 # コンテナがリッスンするポートを定義
-EXPOSE 8080 # Spring Bootのデフォルトポート
+EXPOSE 8080
 
 # アプリケーションの起動コマンド
 # Renderは$PORT環境変数を使用するため、Dockerの起動時にそれを適用
