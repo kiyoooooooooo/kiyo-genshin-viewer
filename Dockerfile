@@ -5,11 +5,12 @@ FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Mavenのpom.xml、srcディレクトリ、Maven Wrapper関連のファイルをコンテナにコピー
+# これらのファイルが存在することを確認してください
 COPY pom.xml .
 COPY src ./src
 COPY mvnw .
-COPY mvnw.cmd . # Windowsユーザーの場合も念のためコピー
-COPY .mvn ./.mvn # Maven Wrapperのダウンロードに必要なディレクトリ
+COPY mvnw.cmd .
+COPY .mvn ./.mvn
 
 # mvnw スクリプトに実行権限を付与
 RUN chmod +x ./mvnw
