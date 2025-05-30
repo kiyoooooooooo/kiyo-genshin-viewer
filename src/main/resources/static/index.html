@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiyo System</title> <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Kiyo System</h1>
+
+        <div class="search-section">
+            <input type="text" id="uidInput" placeholder="UIDを入力してください">
+            <button id="searchButton">検索</button>
+            </div>
+
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <p>データ取得中...</p>
+        </div>
+
+        <div id="errorMessage" class="hidden"></div>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="currentResult">キャラ</button>
+            <button class="tab-button" data-tab="savedUids">保存済みUID</button>
+        </div>
+
+        <div class="tab-content-container">
+            <div id="currentResult" class="tab-content active">
+                <div id="characterInfo" class="hidden">
+                    <div id="characterDetails">
+                        </div>
+                </div>
+            </div>
+
+            <div id="savedUids" class="tab-content">
+                <h2>保存されたUIDリスト</h2>
+                <ul id="savedUidList">
+                    </ul>
+                <button id="clearSavedUids" class="hidden">保存されたUIDを全てクリア</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
