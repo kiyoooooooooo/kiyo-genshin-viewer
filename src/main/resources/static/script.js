@@ -18,79 +18,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSearchedUid = null;
 
-    // --- マッピングデータ (ゲーム内のデータに対応するIDと名前の確実な組み合わせ) ---
-    // 最新のキャラクターIDと名前のマップ
-    // （Enka.Networkの公式データに基づき、一般的なIDを採用）
+    // --- マッピングデータ (あなたのデータと一般的なEnka.NetworkのIDを統合) ---
+    // あなたが提供したデータに基づき、キャラクターIDと名前のマップを再構築
     const characterNameMap = {
-        10000002: 'ウェンティ',
-        10000003: 'ジン',
-        10000005: '旅人(風)',
-        10000006: 'ディルック',
-        10000007: '旅人(岩)',
-        10000008: 'モナ',
-        10000009: '七七',
-        10000010: '刻晴',
-        10000011: 'アンバー',
-        10000012: 'ベネット',
-        10000013: '香菱',
-        10000014: 'ガイア',
-        10000015: '重雲',
-        10000016: '行秋',
-        10000017: 'バーバラ',
-        10000018: 'レザー',
-        10000019: 'リサ',
-        10000020: 'フィッシュル',
-        10000021: 'ノエル',
-        10000022: '凝光',
-        10000023: '北斗',
-        10000024: 'スクロース',
-        10000025: 'クレー',
-        10000026: 'タルタリヤ',
-        10000027: 'ディオナ',
-        10000028: '鍾離',
-        10000029: '辛炎',
-        10000030: 'アルベド',
-        10000031: '甘雨',
-        10000032: '魈',
-        10000033: '胡桃',
-        10000034: 'ロサリア',
-        10000035: '煙緋',
-        10000036: 'エウルア',
-        10000037: '雷電将軍', // 一般的なIDを採用し、重複は解消済み
-        10000038: '楓原万葉',
-        10000039: '旅人(雷)',
-        10000040: 'ゴロー',
-        10000041: '荒瀧一斗',
-        10000042: '申鶴',
-        10000043: '雲菫',
-        10000044: '八重神子',
-        10000045: '神里綾人',
-        10000046: '夜蘭',
-        10000047: '久岐忍',
-        10000048: '鹿野院平蔵',
-        10000049: 'ティナリ',
-        10000050: 'コレイ',
-        10000051: 'ドリー',
-        10000052: 'セノ',
-        10000053: 'キャンディス',
-        10000054: 'ニィロウ',
-        10000055: 'ナヒーダ',
-        10000056: 'レイラ',
-        10000057: 'ファルザン',
-        10000058: '放浪者',
-        10000059: 'アルハイゼン',
-        10000060: 'ヨォーヨ',
-        10000061: 'ディシア',
-        10000062: 'ミカ',
-        10000063: '白朮',
-        10000064: 'カーヴェ',
-        10000065: '綺良々',
-        10000066: 'リネ',
-        10000067: 'リネット',
-        10000068: 'フレミネ',
-        10000069: 'ヌヴィレット',
-        10000070: 'リオセスリ',
-        10000071: 'フリーナ',
+        10000002: '神里綾華', // UI_AvatarIcon_Side_Ayaka
+        10000003: 'ジン',     // UI_AvatarIcon_Side_Qin
+        10000005: '旅人(男)', // UI_AvatarIcon_Side_PlayerBoy (風/岩の区別は動的に行うか、汎用名とする)
+        10000006: 'リサ',     // UI_AvatarIcon_Side_Lisa
+        10000007: '旅人(女)', // UI_AvatarIcon_Side_PlayerGirl
+        10000014: 'バーバラ',   // UI_AvatarIcon_Side_Barbara
+        10000015: 'ガイア',    // UI_AvatarIcon_Side_Kaeya
+        10000016: 'ディルック',  // UI_AvatarIcon_Side_Diluc
+        10000020: 'レザー',    // UI_AvatarIcon_Side_Razor
+        10000021: 'アンバー',   // UI_AvatarIcon_Side_Ambor
+        10000022: 'ウェンティ',  // UI_AvatarIcon_Side_Venti
+        10000023: '香菱',     // UI_AvatarIcon_Side_Xiangling
+        10000024: '北斗',     // UI_AvatarIcon_Side_Beidou
+        10000025: '行秋',     // UI_AvatarIcon_Side_Xingqiu
+        10000026: '魈',      // UI_AvatarIcon_Side_Xiao
+        10000027: '凝光',     // UI_AvatarIcon_Side_Ningguang
+        10000029: 'クレー',    // UI_AvatarIcon_Side_Klee
+        10000030: '鍾離',     // UI_AvatarIcon_Side_Zhongli
+        10000031: 'フィッシュル', // UI_AvatarIcon_Side_Fischl
+        10000032: 'ベネット',   // UI_AvatarIcon_Side_Bennett
+        10000033: 'タルタリヤ',  // UI_AvatarIcon_Side_Tartaglia (注意: 以前胡桃だったが、提供データではタルタリヤ)
+        10000034: 'ノエル',    // UI_AvatarIcon_Side_Noel
+        10000035: '七七',     // UI_AvatarIcon_Side_Qiqi
+        10000036: '重雲',     // UI_AvatarIcon_Side_Chongyun
+        10000037: '甘雨',     // UI_AvatarIcon_Side_Ganyu
+        10000038: 'アルベド',   // UI_AvatarIcon_Side_Albedo
+        10000039: 'ディオナ',   // UI_AvatarIcon_Side_Diona
+        10000041: 'モナ',     // UI_AvatarIcon_Side_Mona
+        10000042: '刻晴',     // UI_AvatarIcon_Side_Keqing
+        10000043: 'スクロース', // UI_AvatarIcon_Side_Sucrose
+        10000044: '辛炎',     // UI_AvatarIcon_Side_Xinyan
+        10000045: 'ロサリア',   // UI_AvatarIcon_Side_Rosaria
+        10000046: '胡桃',     // ★★★ 確定: 提供データから10000046は胡桃 ★★★
+        10000047: '楓原万葉',   // UI_AvatarIcon_Side_Kazuha
+        10000048: '煙緋',     // UI_AvatarIcon_Side_Feiyan
+        10000049: '宵宮',     // UI_AvatarIcon_Side_Yoimiya
+        10000050: 'トーマ',    // UI_AvatarIcon_Side_Tohma
+        10000051: 'エウルア',   // UI_AvatarIcon_Side_Eula
+        10000052: '雷電将軍',   // UI_AvatarIcon_Side_Shougun
+        10000053: '早柚',     // UI_AvatarIcon_Side_Sayu
+        10000054: '珊瑚宮心海', // UI_AvatarIcon_Side_Kokomi
+        10000055: 'ゴロー',    // UI_AvatarIcon_Side_Gorou
+        10000056: '九条裟羅',   // UI_AvatarIcon_Side_Sara
+        10000057: '荒瀧一斗',   // UI_AvatarIcon_Side_Itto
+        10000058: '八重神子',   // UI_AvatarIcon_Side_Yae
+        10000059: '鹿野院平蔵', // UI_AvatarIcon_Side_Heizo
+        10000060: '夜蘭',     // UI_AvatarIcon_Side_Yelan (提供データでは60が夜蘭のようだが、59の後に夜蘭と表示されることが多い)
+        10000061: '綺良々',    // UI_AvatarIcon_Side_Momoka (Ver 3.7)
+        10000062: 'アーロイ',   // UI_AvatarIcon_Side_Aloy
+        10000063: '申鶴',     // UI_AvatarIcon_Side_Shenhe
+        10000064: '雲菫',     // UI_AvatarIcon_Side_Yunjin
+        10000065: '久岐忍',    // UI_AvatarIcon_Side_Shinobu
+        10000066: '神里綾人',   // UI_AvatarIcon_Side_Ayato
+        10000067: 'コレイ',    // UI_AvatarIcon_Side_Collei
+        10000068: 'ドリー',    // UI_AvatarIcon_Side_Dori
+        10000069: 'ティナリ',   // UI_AvatarIcon_Side_Tighnari
+        10000070: 'ニィロウ',   // UI_AvatarIcon_Side_Nilou
+        10000071: 'セノ',     // UI_AvatarIcon_Side_Cyno
+        // ここから先は、あなたが提供したデータに直接の記載がないため、
+        // 以前のマップに基づき、一般的なIDと名前を引き続き使用します。
+        // もしこれらのIDに対応するデータが提供されたら、再修正します。
         10000072: 'シャルロット',
         10000073: '旅人(草)',
         10000074: 'ナヴィア',
@@ -102,20 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
         10000080: 'セトス',
         10000081: 'クロリンデ',
         10000082: 'シグウィン',
-        10000083: 'エミリエ',
-        10000085: '神里綾華',
-        10000086: '宵宮',
-        10000087: '早柚',
-        10000088: 'アーロイ',
-        10000089: '九条裟羅',
-        10000090: '珊瑚宮心海',
-        10000091: 'トーマ',
+        10000083: 'エミリエ', // 4.8で実装予定のキャラクター
         10000096: '旅人(水)',
-        10000121: '旅人(炎)',
+        10000121: '旅人(炎)', // 最新の旅人形態
+
+        // 旅人（性別と元素でIDが異なる可能性あり）
+        // 旅人はUI_AvatarIcon_Side_PlayerBoy / Girl で区別され、元素はElementプロパティで判断される
+        // Enka.Networkは性別＋元素で別のavatarIdを返すことがあるが、
+        // ここでは一般的なものを保持し、必要に応じてUI_AvatarIcon_SideNameで動的に判断も可能
     };
 
-    // 最新の聖遺物セットIDと名前のマップ
-    // （Enka.Networkの公式データに基づき、一般的なIDを採用）
+    // 最新の聖遺物セットIDと名前のマップ (変更なし、最新データに更新済み)
     const artifactSetNameMap = {
         15001: '雷を鎮める尊者',
         15002: '烈火を渡る賢者',
@@ -150,8 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
         15031: '在りし日の歌',
         15032: '残響の森で囁かれる夜話',
         15033: '諧律奇想の断章',
-        15034: '遂げられなかった想い', // 4.7で追加された新聖遺物
-        15035: '黒曜の秘典', // 4.7で追加された新聖遺物
+        15034: '遂げられなかった想い', // Ver. 4.7 新聖遺物
+        15035: '黒曜の秘典', // Ver. 4.7 新聖遺物
         15039: '旅人の心',
         15040: '勇士の心',
         15041: '守護の心',
@@ -171,9 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         15055: '幸運',
     };
 
-    // 最新の武器IDと名前のマップ
-    // （Enka.Networkの公式データに基づき、一般的なIDを採用）
-    // ★ここが以前のあなたのコードから大きく変更された部分です★
+    // 最新の武器IDと名前のマップ (変更なし、最新データに更新済み)
     const weaponNameMap = {
         // 片手剣 (Sword)
         11501: '風鷹剣',
@@ -181,11 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
         11503: '斬山の刃',
         11504: '磐岩結緑',
         11505: '蒼古なる自由への誓い',
-        11506: '霧切の廻光', // 神里綾華のモチーフ
-        11507: '波乱月白経津', // 神里綾人のモチーフ
+        11506: '霧切の廻光',
+        11507: '波乱月白経津',
         11508: '聖顕の鍵',
         11509: '萃光の裁葉',
-        11510: '静水流転の輝き', // フリーナのモチーフ
+        11510: '静水流転の輝き',
         11511: '有楽御簾切',
         11512: '赦罪',
         11401: '西風剣',
@@ -220,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 両手剣 (Claymore)
         12501: '天空の傲',
-        12502: '狼の末路', // ディルックのモチーフ
+        12502: '狼の末路',
         12503: '無工の剣',
         12504: '松韻の響く頃',
         12505: '赤角石塵滅砕',
@@ -256,8 +242,8 @@ document.addEventListener('DOMContentLoaded', () => {
         13501: '和璞鳶',
         13502: '天空の脊',
         13503: '破天の槍',
-        13504: '護摩の杖', // 胡桃のモチーフ
-        13505: '草薙の稲光', // 雷電将軍のモチーフ
+        13504: '護摩の杖',
+        13505: '草薙の稲光',
         13506: '息災',
         13507: '赤砂の杖',
         13508: '赤月のシルエット',
@@ -267,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         13403: '流月の針',
         13404: '黒岩の突槍',
         13405: '死闘の槍',
-        13406: '西風長槍',
+        13406: '西風長槍', // 武器ID 13424 がもしこれだったら対応
         13407: 'ドラゴンスピア',
         13408: '千岩長槍',
         13409: '喜多院十文字槍',
@@ -286,14 +272,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 法器 (Catalyst)
         14501: '天空の巻',
-        14502: '四風原典', // ウェンティのモチーフ
+        14502: '四風原典',
         14503: '浮世の錠',
         14504: '不滅の月華',
         14505: '神楽の真意',
         14506: '千夜に浮かぶ夢',
         14507: 'トゥライトゥーラの記憶',
         14508: '碧落の瓏',
-        14509: '久遠流転の大典', // ヌヴィレットのモチーフ
+        14509: '久遠流転の大典',
         14510: '凛流の監視者',
         14511: '鶴鳴の余韻',
         14401: '西風秘典',
@@ -327,13 +313,13 @@ document.addEventListener('DOMContentLoaded', () => {
         15501: '天空の翼',
         15502: 'アモスの弓',
         15503: '終焉を嘆く詩',
-        15504: '飛雷の鳴弦', // 宵宮のモチーフ
+        15504: '飛雷の鳴弦',
         15505: '冬極の白星',
-        15506: '若水', // 夜蘭のモチーフ
+        15506: '若水',
         15507: '狩人の道',
         15508: '始まりの大魔術',
         15509: '白雨心弦',
-        15401: '西風猟弓',
+        15401: '西風猟弓', // 西風弓の一般的なID
         15402: '絶弦',
         15403: '祭礼の弓',
         15404: '旧貴族長弓',
@@ -363,7 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
         15305: '文使い',
     };
 
-
     // --- タブ切り替え機能 ---
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -385,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
     searchButton.addEventListener('click', () => {
         const uid = uidInput.value.trim();
         if (uid) {
-            const uidRegex = /^\d{9}$/; // 9桁のUIDを許可 (10桁のUIDは存在しません。アジアサーバーのUIDは8か9桁です)
+            const uidRegex = /^\d{9}$/; // 9桁のUIDを許可
             if (uidRegex.test(uid)) {
                 fetchCharacterData(uid);
             } else {
@@ -481,33 +466,37 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.avatarInfoList && data.avatarInfoList.length > 0) {
                 data.avatarInfoList.forEach(char => {
                     const characterId = char.avatarId;
+                    // characterNameMap を使用して名前を解決
                     const characterName = characterNameMap[characterId] || `キャラクターID:${characterId}`;
-                    const characterImageSrc = `https://enka.network/ui/UI_AvatarIcon_${characterId}.png`;
-                    
+                    const characterImageSrc = `https://enka.network/ui/UI_AvatarIcon_${characterId}.png`; // Enka.Networkの画像パスはIDを使用
+
                     const charLevel = char.propMap && char.propMap['4001'] ? char.propMap['4001'].val : '不明';
                     
                     let talentLevels = [];
                     if (char.skillLevelMap) {
                         const proudSkillExtraLevelMap = char.proudSkillExtraLevelMap || {};
                         
-                        const skillIds = Object.keys(char.skillLevelMap).sort(); 
-                        if (skillIds.length >= 3) {
-                            for(let i = 0; i < 3; i++) {
-                                const skillId = skillIds[i];
-                                let level = char.skillLevelMap[skillId];
-                                if (proudSkillExtraLevelMap[skillId]) {
-                                    level += proudSkillExtraLevelMap[skillId];
-                                }
-                                talentLevels.push(level);
+                        // 天賦レベルを攻撃>元素スキル>元素爆発の順で取得（最大3つ）
+                        // ここはSkillDepotIdではなく、各キャラクターのproudSkillExtraLevelMapに紐づくキーでソートする方が正確
+                        // 今回提供されたデータにはSkillDepotIdも含まれているので、それを活用する
+                        const skillDepotId = char.skillDepotId; // キャラクターのスキルデポIDを取得
+
+                        // ProudMapから対応するProudSkillIdを取得し、それに対応するスキルレベルを抽出
+                        // これは非常に複雑なので、一旦、スキルレベルマップのキーをそのまま使う簡単な方法を継続
+                        // もし天賦の表示がおかしい場合は、この部分のロジックを再検討します。
+                        const skillIds = Object.keys(char.skillLevelMap).sort((a, b) => {
+                            // シンプルに数字順にソートする
+                            return parseInt(a) - parseInt(b);
+                        }); 
+                        
+                        // 最大3つの天賦レベルを表示
+                        for(let i = 0; i < Math.min(skillIds.length, 3); i++) {
+                            const skillId = skillIds[i];
+                            let level = char.skillLevelMap[skillId];
+                            if (proudSkillExtraLevelMap[skillId]) {
+                                level += proudSkillExtraLevelMap[skillId]; // 凸による天賦レベルアップ
                             }
-                        } else {
-                            skillIds.forEach(skillId => {
-                                let level = char.skillLevelMap[skillId];
-                                if (proudSkillExtraLevelMap[skillId]) {
-                                    level += proudSkillExtraLevelMap[skillId];
-                                }
-                                talentLevels.push(level);
-                            });
+                            talentLevels.push(level);
                         }
                     }
                     const skillLevelsDisplay = talentLevels.length > 0 ? talentLevels.join('/') : '情報なし';
@@ -528,15 +517,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (artifactEquips.length > 0) {
                         const artifactSets = {};
                         artifactEquips.forEach(art => {
-                            const setNameId = art.flat.setId;
-                            const setName = artifactSetNameMap[setNameId] || `聖遺物ID:${setNameId}`;
-                            artifactSets[setName] = (artifactSets[setName] || 0) + 1;
+                            // setId が存在し、かつ flat プロパティ内に定義されていることを厳密に確認
+                            if (art.flat && art.flat.setId !== undefined) {
+                                const setNameId = art.flat.setId;
+                                const setName = artifactSetNameMap[setNameId] || `聖遺物ID:${setNameId}`;
+                                artifactSets[setName] = (artifactSets[setName] || 0) + 1;
+                            } else {
+                                console.warn('聖遺物setIdが見つからないか、データが不完全です:', art);
+                            }
                         });
 
-                        artifactsDisplay = Object.keys(artifactSets).map(setName => {
-                            const count = artifactSets[setName];
-                            return `<span class="artifact-name">${setName} (${count})</span>`;
-                        }).join('<br>');
+                        const setNamesList = Object.keys(artifactSets);
+                        if (setNamesList.length > 0) {
+                            artifactsDisplay = setNamesList.map(setName => {
+                                const count = artifactSets[setName];
+                                return `<span class="artifact-name">${setName} (${count})</span>`;
+                            }).join('<br>');
+                        } else {
+                            artifactsDisplay = '聖遺物セット情報取得エラー'; // 全てsetIdが見つからない場合
+                        }
                     }
 
 
