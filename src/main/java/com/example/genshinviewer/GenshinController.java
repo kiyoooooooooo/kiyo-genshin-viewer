@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
+import org.springframework.http.HttpStatusCode; // ★この行を追加
 
 @RestController
-@RequestMapping("/api/genshin")
+@RequestMapping("/api/enka")
 public class GenshinController {
 
     private static final Logger logger = LoggerFactory.getLogger(GenshinController.class);
 
-    private final EnkaService enkaService; // EnkaServiceが同じパッケージにあるため、import不要で参照可能
+    private final EnkaService enkaService;
 
     public GenshinController(EnkaService enkaService) {
         this.enkaService = enkaService;
@@ -24,7 +25,6 @@ public class GenshinController {
 
     @GetMapping("/character/{uid}")
     public ResponseEntity<?> getCharacterData(@PathVariable String uid) {
-        // UIDのバリデーションを9桁または10桁に対応させる正規表現
         if (!uid.matches("^\\d{9,10}$")) {
             return ResponseEntity.badRequest().body("UIDは9桁または10桁の数字である必要があります。");
         }
@@ -36,7 +36,16 @@ public class GenshinController {
             return ResponseEntity.ok(characterData);
         } catch (Exception e) {
             logger.error("通信エラー: UID " + uid + " のデータ取得中にエラーが発生しました。", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("キャラクター情報の取得中にエラーが発生しました。UIDを確認し、プレイヤーが展示を公開しているかお確かめください。");
+            if (e instanceof org.springframework.web.client.HttpClientErrorException) {
+                HttpStatusCode status = ((org.springframework.web.client.HttpClientErrorException) e).getStatusCode(); // ★ここを修正
+
+                if (status.value() == HttpStatus.NOT_FOUND.value()) { // ★ここを修正
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body("プレイヤーが見つかりません。UIDが正しいか、プロフィールが公開されているか確認してください。");
+                } else if (status.value() == HttpStatus.TOO_MANY_REQUESTS.value()) { // ★ここを修正
+                    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS.value()).body("リクエストが多すぎます。しばらく待ってから再度お試しください。");
+                }
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body("キャラクター情報の取得中にエラーが発生しました。UIDを確認し、プレイヤーが展示を公開しているかお確かめください。");
         }
     }
 }
